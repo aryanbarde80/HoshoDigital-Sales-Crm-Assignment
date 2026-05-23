@@ -1,4 +1,4 @@
-# Orbit Sales OS
+# Orbit Sales OS - HOSHO DIGITAL
 
 Orbit Sales OS is a polished Sales Management CRM built for the HOSHŌ Digital screening exercise. The project turns the PDF user stories into a premium, locally runnable SaaS-style workspace with role-based navigation, rich dashboards, realistic business data, and clean evaluator onboarding.
 
