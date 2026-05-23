@@ -1,10 +1,11 @@
-@import url("https://api.fontshare.com/v2/css?f[]=clash-display@500,600&f[]=satoshi@400,500,700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
+:root,
+:root[data-theme="midnight"] {
   --surface-app: #07111f;
   --surface-sidebar: linear-gradient(180deg, rgba(8, 15, 29, 0.96), rgba(7, 17, 31, 0.92));
   --surface-card: rgba(10, 20, 36, 0.9);
@@ -15,6 +16,7 @@
   --text-secondary: #cbd5e1;
   --text-muted: #94a3b8;
   --accent-strong: #38bdf8;
+  --accent-secondary: #2dd4bf;
   --shadow-card: 0 24px 80px rgba(2, 6, 23, 0.34);
   --shadow-soft: 0 18px 40px rgba(56, 189, 248, 0.18);
   --cyan: #4fd1c5;
@@ -36,9 +38,44 @@
   --text-secondary: #334155;
   --text-muted: #64748b;
   --accent-strong: #0284c7;
+  --accent-secondary: #0f766e;
   --shadow-card: 0 20px 60px rgba(15, 23, 42, 0.08);
   --shadow-soft: 0 18px 40px rgba(2, 132, 199, 0.16);
   color-scheme: light;
+}
+
+:root[data-theme="aurora"] {
+  --surface-app: #031716;
+  --surface-sidebar: linear-gradient(180deg, rgba(6, 30, 28, 0.97), rgba(3, 23, 22, 0.94));
+  --surface-card: rgba(7, 30, 29, 0.9);
+  --surface-muted: rgba(95, 255, 220, 0.05);
+  --border-soft: rgba(94, 234, 212, 0.18);
+  --border-strong: rgba(94, 234, 212, 0.32);
+  --text-primary: #ecfeff;
+  --text-secondary: #c4f1ef;
+  --text-muted: #7dd3c7;
+  --accent-strong: #14b8a6;
+  --accent-secondary: #67e8f9;
+  --shadow-card: 0 24px 80px rgba(1, 15, 14, 0.36);
+  --shadow-soft: 0 18px 42px rgba(20, 184, 166, 0.2);
+  color-scheme: dark;
+}
+
+:root[data-theme="ember"] {
+  --surface-app: #140d08;
+  --surface-sidebar: linear-gradient(180deg, rgba(30, 15, 8, 0.97), rgba(20, 13, 8, 0.94));
+  --surface-card: rgba(32, 18, 10, 0.9);
+  --surface-muted: rgba(255, 161, 67, 0.06);
+  --border-soft: rgba(251, 146, 60, 0.16);
+  --border-strong: rgba(251, 146, 60, 0.28);
+  --text-primary: #fff7ed;
+  --text-secondary: #fed7aa;
+  --text-muted: #fdba74;
+  --accent-strong: #f97316;
+  --accent-secondary: #fb7185;
+  --shadow-card: 0 24px 80px rgba(20, 8, 3, 0.38);
+  --shadow-soft: 0 18px 42px rgba(249, 115, 22, 0.18);
+  color-scheme: dark;
 }
 
 html,
@@ -49,7 +86,7 @@ body,
 
 body {
   margin: 0;
-  font-family: "Satoshi", system-ui, sans-serif;
+  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
   background:
     radial-gradient(circle at top left, rgba(96, 165, 250, 0.16), transparent 28%),
     radial-gradient(circle at bottom right, rgba(79, 209, 197, 0.12), transparent 30%),
@@ -62,7 +99,7 @@ h1,
 h2,
 h3,
 h4 {
-  font-family: "Clash Display", "Satoshi", system-ui, sans-serif;
+  font-family: "Space Grotesk", "Plus Jakarta Sans", system-ui, sans-serif;
   letter-spacing: -0.02em;
 }
 
@@ -82,7 +119,40 @@ textarea {
   font: inherit;
 }
 
+input,
+textarea {
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+input:focus,
+textarea:focus {
+  border-color: color-mix(in srgb, var(--accent-strong) 72%, white 28%);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-strong) 18%, transparent 82%);
+}
+
 button:disabled {
   cursor: not-allowed;
   opacity: 0.7;
+}
+
+* {
+  scrollbar-color: color-mix(in srgb, var(--accent-strong) 36%, transparent 64%)
+    transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent-strong) 32%, transparent 68%);
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
 }

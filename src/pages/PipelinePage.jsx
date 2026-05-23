@@ -9,6 +9,7 @@ import { SectionHeading } from "../components/common/SectionHeading";
 import { Tag } from "../components/common/Tag";
 import { useAppContext } from "../context/AppContext";
 import { formatCompactCurrency, formatDate } from "../utils/formatters";
+import { opportunitySchema, validateForm } from "../utils/validation";
 
 const STAGES = ["Qualified", "Proposal", "Negotiation", "At Risk", "Closed Won", "Closed Lost"];
 
@@ -30,6 +31,7 @@ export function PipelinePage() {
     ...blankOpportunity,
     customerId: data.customers[0]?.id ?? ""
   });
+  const [errors, setErrors] = useState({});
 
   const grouped = useMemo(
     () =>
@@ -40,16 +42,24 @@ export function PipelinePage() {
     [data.opportunities]
   );
 
-  const handleCreateOpportunity = (event) => {
+  const handleCreateOpportunity = async (event) => {
     event.preventDefault();
+    const { errors: validationErrors, values } = await validateForm(opportunitySchema, draft);
+
+    if (Object.keys(validationErrors).length) {
+      setErrors(validationErrors);
+      return;
+    }
+
     upsertOpportunity({
-      ...draft,
-      id: `opp-${draft.name.toLowerCase().replaceAll(" ", "-")}`,
+      ...values,
+      id: `opp-${values.name.toLowerCase().replaceAll(" ", "-")}`,
       ownerId: session.userId,
-      probability: Number(draft.probability),
-      value: Number(draft.value)
+      probability: Number(values.probability),
+      value: Number(values.value)
     });
     setDraft({ ...blankOpportunity, customerId: data.customers[0]?.id ?? "" });
+    setErrors({});
   };
 
   return (
@@ -66,12 +76,20 @@ export function PipelinePage() {
       />
 
       <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
-        <div className="grid gap-4 xl:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {grouped.map((column) => (
             <Card key={column.stage} className="p-4">
               <div className="flex items-center justify-between gap-3">
                 <h3 className="font-semibold text-[var(--text-primary)]">{column.stage}</h3>
-                <Tag tone={column.stage.includes("Lost") ? "danger" : column.stage.includes("Won") ? "success" : "info"}>
+                <Tag
+                  tone={
+                    column.stage.includes("Lost")
+                      ? "danger"
+                      : column.stage.includes("Won")
+                        ? "success"
+                        : "info"
+                  }
+                >
                   {column.opportunities.length}
                 </Tag>
               </div>
@@ -80,7 +98,10 @@ export function PipelinePage() {
                   column.opportunities.map((opportunity) => {
                     const customer = data.customers.find((item) => item.id === opportunity.customerId);
                     return (
-                      <div key={opportunity.id} className="rounded-[22px] border border-[var(--border-soft)] bg-[var(--surface-muted)] p-4">
+                      <div
+                        key={opportunity.id}
+                        className="rounded-[22px] border border-[var(--border-soft)] bg-[var(--surface-muted)] p-4"
+                      >
                         <h4 className="font-semibold text-[var(--text-primary)]">{opportunity.name}</h4>
                         <p className="mt-1 text-sm text-[var(--text-secondary)]">{customer?.name}</p>
                         <div className="mt-3 flex items-center justify-between text-sm text-[var(--text-secondary)]">
@@ -94,7 +115,10 @@ export function PipelinePage() {
                     );
                   })
                 ) : (
-                  <EmptyState title="No opportunities" body="This stage is currently empty in the demo data." />
+                  <EmptyState
+                    title="No opportunities"
+                    body="This stage is currently empty in the demo data."
+                  />
                 )}
               </div>
             </Card>
@@ -117,18 +141,23 @@ export function PipelinePage() {
                 <input
                   type={type}
                   value={draft[field]}
-                  onChange={(event) => setDraft((current) => ({ ...current, [field]: event.target.value }))}
+                  onChange={(event) => {
+                    setDraft((current) => ({ ...current, [field]: event.target.value }));
+                    setErrors((current) => ({ ...current, [field]: null }));
+                  }}
                   className="rounded-2xl border border-[var(--border-soft)] bg-[var(--surface-muted)] px-4 py-3 text-[var(--text-primary)] outline-none"
                 />
+                {errors[field] ? <p className="text-xs text-rose-300">{errors[field]}</p> : null}
               </label>
             ))}
 
             <CustomSelect
               label="Customer"
               value={draft.customerId}
-              onChange={(nextCustomerId) =>
-                setDraft((current) => ({ ...current, customerId: nextCustomerId }))
-              }
+              onChange={(nextCustomerId) => {
+                setDraft((current) => ({ ...current, customerId: nextCustomerId }));
+                setErrors((current) => ({ ...current, customerId: null }));
+              }}
               options={data.customers.map((customer) => ({
                 value: customer.id,
                 label: customer.name,
@@ -136,11 +165,13 @@ export function PipelinePage() {
               }))}
               buttonClassName="bg-[var(--surface-muted)]"
             />
+            {errors.customerId ? <p className="-mt-2 text-xs text-rose-300">{errors.customerId}</p> : null}
 
             <CustomSelect
               label="Stage"
               value={draft.stage}
-              onChange={(nextStage) =>
+              onChange={(nextStage) => {
+                setErrors((current) => ({ ...current, stage: null }));
                 setDraft((current) => ({
                   ...current,
                   stage: nextStage,
@@ -150,8 +181,8 @@ export function PipelinePage() {
                       : nextStage === "Closed Lost"
                         ? "Lost"
                         : "Open"
-                }))
-              }
+                }));
+              }}
               options={STAGES.map((stage) => ({
                 value: stage,
                 label: stage,
@@ -170,6 +201,7 @@ export function PipelinePage() {
               }))}
               buttonClassName="bg-[var(--surface-muted)]"
             />
+            {errors.stage ? <p className="-mt-2 text-xs text-rose-300">{errors.stage}</p> : null}
 
             <Button type="submit">
               <FiPlus />

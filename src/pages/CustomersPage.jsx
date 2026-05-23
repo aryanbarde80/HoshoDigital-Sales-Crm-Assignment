@@ -9,6 +9,7 @@ import { SectionHeading } from "../components/common/SectionHeading";
 import { Tag } from "../components/common/Tag";
 import { useAppContext } from "../context/AppContext";
 import { formatCompactCurrency, formatDate } from "../utils/formatters";
+import { customerSchema, validateForm } from "../utils/validation";
 
 const blankCustomer = {
   name: "",
@@ -30,6 +31,7 @@ export function CustomersPage() {
   const { data, session, upsertCustomer, deleteCustomer } = useAppContext();
   const [editingCustomer, setEditingCustomer] = useState(null);
   const [draft, setDraft] = useState(blankCustomer);
+  const [errors, setErrors] = useState({});
 
   const activeOwnerId = session.userId ?? data.users[0].id;
 
@@ -40,7 +42,10 @@ export function CustomersPage() {
         label: "Customer",
         render: (customer) => (
           <div>
-            <Link to={`/customers/${customer.id}`} className="font-semibold text-[var(--text-primary)] hover:underline">
+            <Link
+              to={`/customers/${customer.id}`}
+              className="font-semibold text-[var(--text-primary)] hover:underline"
+            >
               {customer.name}
             </Link>
             <p className="mt-1 text-xs text-[var(--text-muted)]">{customer.industry}</p>
@@ -67,7 +72,9 @@ export function CustomersPage() {
         key: "healthScore",
         label: "Health",
         render: (customer) => (
-          <span className="font-semibold text-[var(--text-primary)]">{customer.healthScore}/100</span>
+          <span className="font-semibold text-[var(--text-primary)]">
+            {customer.healthScore}/100
+          </span>
         )
       },
       {
@@ -81,11 +88,16 @@ export function CustomersPage() {
               onClick={() => {
                 setEditingCustomer(customer.id);
                 setDraft(customer);
+                setErrors({});
               }}
             >
               <FiEdit2 />
             </Button>
-            <Button intent="ghost" className="px-3 py-2" onClick={() => deleteCustomer(customer.id)}>
+            <Button
+              intent="ghost"
+              className="px-3 py-2"
+              onClick={() => deleteCustomer(customer.id)}
+            >
               <FiTrash2 />
             </Button>
           </div>
@@ -95,18 +107,26 @@ export function CustomersPage() {
     [deleteCustomer]
   );
 
-  const handleSave = (event) => {
+  const handleSave = async (event) => {
     event.preventDefault();
+    const { errors: validationErrors, values } = await validateForm(customerSchema, draft);
+
+    if (Object.keys(validationErrors).length) {
+      setErrors(validationErrors);
+      return;
+    }
+
     upsertCustomer({
       id: editingCustomer ?? `cust-${draft.name.toLowerCase().replaceAll(" ", "-")}`,
       ownerId: activeOwnerId,
-      ...draft,
-      healthScore: Number(draft.healthScore),
-      satisfaction: Number(draft.satisfaction),
-      annualValue: Number(draft.annualValue)
+      ...values,
+      healthScore: Number(values.healthScore),
+      satisfaction: Number(values.satisfaction),
+      annualValue: Number(values.annualValue)
     });
     setDraft(blankCustomer);
     setEditingCustomer(null);
+    setErrors({});
   };
 
   return (
@@ -125,6 +145,7 @@ export function CustomersPage() {
             onClick={() => {
               setEditingCustomer(null);
               setDraft(blankCustomer);
+              setErrors({});
             }}
           >
             <FiPlus />
@@ -158,11 +179,21 @@ export function CustomersPage() {
               <label key={field} className="grid gap-2 text-sm text-[var(--text-secondary)]">
                 {label}
                 <input
-                  type={field.includes("Date") || field === "renewalDate" ? "date" : field === "annualValue" || field === "healthScore" || field === "satisfaction" ? "number" : "text"}
+                  type={
+                    field.includes("Date") || field === "renewalDate"
+                      ? "date"
+                      : field === "annualValue" || field === "healthScore" || field === "satisfaction"
+                        ? "number"
+                        : "text"
+                  }
                   value={draft[field]}
-                  onChange={(event) => setDraft((current) => ({ ...current, [field]: event.target.value }))}
+                  onChange={(event) => {
+                    setDraft((current) => ({ ...current, [field]: event.target.value }));
+                    setErrors((current) => ({ ...current, [field]: null }));
+                  }}
                   className="rounded-2xl border border-[var(--border-soft)] bg-[var(--surface-muted)] px-4 py-3 text-[var(--text-primary)] outline-none"
                 />
+                {errors[field] ? <p className="text-xs text-rose-300">{errors[field]}</p> : null}
               </label>
             ))}
 
@@ -171,9 +202,15 @@ export function CustomersPage() {
               <textarea
                 rows="4"
                 value={draft.accountPlan}
-                onChange={(event) => setDraft((current) => ({ ...current, accountPlan: event.target.value }))}
+                onChange={(event) => {
+                  setDraft((current) => ({ ...current, accountPlan: event.target.value }));
+                  setErrors((current) => ({ ...current, accountPlan: null }));
+                }}
                 className="rounded-2xl border border-[var(--border-soft)] bg-[var(--surface-muted)] px-4 py-3 text-[var(--text-primary)] outline-none"
               />
+              {errors.accountPlan ? (
+                <p className="text-xs text-rose-300">{errors.accountPlan}</p>
+              ) : null}
             </label>
 
             <label className="grid gap-2 text-sm text-[var(--text-secondary)]">
@@ -181,9 +218,13 @@ export function CustomersPage() {
               <textarea
                 rows="4"
                 value={draft.notes}
-                onChange={(event) => setDraft((current) => ({ ...current, notes: event.target.value }))}
+                onChange={(event) => {
+                  setDraft((current) => ({ ...current, notes: event.target.value }));
+                  setErrors((current) => ({ ...current, notes: null }));
+                }}
                 className="rounded-2xl border border-[var(--border-soft)] bg-[var(--surface-muted)] px-4 py-3 text-[var(--text-primary)] outline-none"
               />
+              {errors.notes ? <p className="text-xs text-rose-300">{errors.notes}</p> : null}
             </label>
 
             <Button type="submit">{editingCustomer ? "Save changes" : "Create customer"}</Button>

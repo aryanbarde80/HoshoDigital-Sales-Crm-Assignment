@@ -15,6 +15,7 @@ Orbit Sales OS is a polished CRM-style Sales Management System built for the HOS
 - Product workspace for updates, feature requests, and customer feedback
 - Executive analytics view for strategic oversight
 - Local persistence via browser storage so the app works immediately after startup
+- Enterprise polish including audit logging, idle session logout, multiple dashboard themes, validated forms, sanitized markdown rendering, and production-style error boundaries
 
 ## Stack
 

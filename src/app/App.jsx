@@ -1,4 +1,8 @@
+import { useEffect, useState } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import { Navigate, Route, Routes } from "react-router-dom";
+import { ErrorFallback } from "../components/common/ErrorFallback";
+import { GlobalLoader } from "../components/common/GlobalLoader";
 import { Shell } from "../components/layout/Shell";
 import { useAppContext } from "../context/AppContext";
 import { ActivitiesPage } from "../pages/ActivitiesPage";
@@ -15,7 +19,19 @@ import { ReportsPage } from "../pages/ReportsPage";
 import { TeamPage } from "../pages/TeamPage";
 
 function ProtectedRoutes() {
-  const { session } = useAppContext();
+  const { recordAuditLog, session } = useAppContext();
+
+  useEffect(() => {
+    if (!session.role) {
+      return;
+    }
+
+    recordAuditLog({
+      action: "open_workspace",
+      entity: "session",
+      detail: `Loaded protected workspace for ${session.role}.`
+    });
+  }, [recordAuditLog, session.role]);
 
   if (!session.role) {
     return <Navigate to="/login" replace />;
@@ -42,14 +58,23 @@ function ProtectedRoutes() {
 
 export function App() {
   const { session } = useAppContext();
+  const [showLoader, setShowLoader] = useState(true);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setShowLoader(false), 1200);
+    return () => window.clearTimeout(timer);
+  }, []);
 
   return (
-    <Routes>
-      <Route
-        path="/login"
-        element={session.role ? <Navigate to="/" replace /> : <LoginPage />}
-      />
-      <Route path="/*" element={<ProtectedRoutes />} />
-    </Routes>
+    <ErrorBoundary FallbackComponent={ErrorFallback}>
+      {showLoader ? <GlobalLoader /> : null}
+      <Routes>
+        <Route
+          path="/login"
+          element={session.role ? <Navigate to="/" replace /> : <LoginPage />}
+        />
+        <Route path="/*" element={<ProtectedRoutes />} />
+      </Routes>
+    </ErrorBoundary>
   );
 }
