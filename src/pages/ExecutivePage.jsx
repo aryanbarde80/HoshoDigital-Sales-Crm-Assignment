@@ -1,5 +1,6 @@
 import { Card } from "../components/common/Card";
 import { MetricCard } from "../components/common/MetricCard";
+import { Seo } from "../components/common/Seo";
 import { SectionHeading } from "../components/common/SectionHeading";
 import { useAppContext } from "../context/AppContext";
 import { formatCompactCurrency, formatPercent } from "../utils/formatters";
@@ -10,6 +11,11 @@ export function ExecutivePage() {
 
   return (
     <div className="space-y-6">
+      <Seo
+        title="Executive Analytics"
+        path="/executive"
+        description="View strategic revenue KPIs, regional outlook, business performance, and real-time style executive insights in Orbit Sales OS."
+      />
       <SectionHeading
         eyebrow="Executive analytics"
         title="Strategic revenue intelligence"

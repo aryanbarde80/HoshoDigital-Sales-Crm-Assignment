@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Card } from "../components/common/Card";
 import { EmptyState } from "../components/common/EmptyState";
+import { Seo } from "../components/common/Seo";
 import { SectionHeading } from "../components/common/SectionHeading";
 import { Tag } from "../components/common/Tag";
 import { useAppContext } from "../context/AppContext";
@@ -31,6 +32,11 @@ export function CustomerDetailPage() {
 
   return (
     <div className="space-y-6">
+      <Seo
+        title={customer.name}
+        path={`/customers/${customer.id}`}
+        description={`Explore account history, activities, opportunity portfolio, and renewal context for ${customer.name}.`}
+      />
       <SectionHeading
         eyebrow="Customer profile"
         title={customer.name}

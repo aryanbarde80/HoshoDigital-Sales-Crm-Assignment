@@ -1,4 +1,5 @@
 import { Card } from "../components/common/Card";
+import { Seo } from "../components/common/Seo";
 import { SectionHeading } from "../components/common/SectionHeading";
 import { Tag } from "../components/common/Tag";
 import { useAppContext } from "../context/AppContext";
@@ -9,6 +10,11 @@ export function ProductPage() {
 
   return (
     <div className="space-y-6">
+      <Seo
+        title="Product"
+        path="/product"
+        description="Manage product updates, customer feedback themes, and feature request prioritization from the product management workspace."
+      />
       <SectionHeading
         eyebrow="Product management"
         title="Updates, feature requests, and feedback intelligence"

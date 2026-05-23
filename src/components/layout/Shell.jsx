@@ -15,6 +15,7 @@ import {
 import { useAppContext } from "../../context/AppContext";
 import { initialsFromName } from "../../utils/formatters";
 import { Button } from "../common/Button";
+import { CustomSelect } from "../common/CustomSelect";
 
 const navigation = [
   { to: "/", label: "Dashboard", icon: <FiGrid /> },
@@ -73,17 +74,17 @@ export function Shell({ children }) {
 
           <div className="mt-8 rounded-[28px] bg-[var(--surface-muted)] p-4">
             <p className="text-xs uppercase tracking-[0.28em] text-[var(--text-muted)]">Role Switcher</p>
-            <select
+            <CustomSelect
               value={session.role}
-              onChange={(event) => switchRole(event.target.value)}
-              className="mt-3 w-full rounded-2xl border border-[var(--border-soft)] bg-[var(--surface-card)] px-3 py-3 text-sm text-[var(--text-primary)] outline-none"
-            >
-              {roles.map((role) => (
-                <option key={role.id} value={role.id}>
-                  {role.title}
-                </option>
-              ))}
-            </select>
+              onChange={switchRole}
+              options={roles.map((role) => ({
+                value: role.id,
+                label: role.title,
+                description: role.summary
+              }))}
+              className="mt-3"
+              buttonClassName="bg-[var(--surface-card)]"
+            />
             <p className="mt-3 text-sm text-[var(--text-secondary)]">
               {roles.find((role) => role.id === session.role)?.summary}
             </p>

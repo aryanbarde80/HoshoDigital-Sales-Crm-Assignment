@@ -2,7 +2,9 @@ import { useMemo, useState } from "react";
 import { FiPlus } from "react-icons/fi";
 import { Button } from "../components/common/Button";
 import { Card } from "../components/common/Card";
+import { CustomSelect } from "../components/common/CustomSelect";
 import { EmptyState } from "../components/common/EmptyState";
+import { Seo } from "../components/common/Seo";
 import { SectionHeading } from "../components/common/SectionHeading";
 import { Tag } from "../components/common/Tag";
 import { useAppContext } from "../context/AppContext";
@@ -52,6 +54,11 @@ export function PipelinePage() {
 
   return (
     <div className="space-y-6">
+      <Seo
+        title="Pipeline"
+        path="/pipeline"
+        description="Track opportunities, deal values, stages, forecast confidence, and ownership in the Orbit Sales OS pipeline board."
+      />
       <SectionHeading
         eyebrow="Sales opportunities"
         title="Pipeline orchestration"
@@ -116,41 +123,53 @@ export function PipelinePage() {
               </label>
             ))}
 
-            <label className="grid gap-2 text-sm text-[var(--text-secondary)]">
-              Customer
-              <select
-                value={draft.customerId}
-                onChange={(event) => setDraft((current) => ({ ...current, customerId: event.target.value }))}
-                className="rounded-2xl border border-[var(--border-soft)] bg-[var(--surface-muted)] px-4 py-3 text-[var(--text-primary)] outline-none"
-              >
-                {data.customers.map((customer) => (
-                  <option key={customer.id} value={customer.id}>
-                    {customer.name}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <CustomSelect
+              label="Customer"
+              value={draft.customerId}
+              onChange={(nextCustomerId) =>
+                setDraft((current) => ({ ...current, customerId: nextCustomerId }))
+              }
+              options={data.customers.map((customer) => ({
+                value: customer.id,
+                label: customer.name,
+                description: `${customer.region} • ${customer.industry}`
+              }))}
+              buttonClassName="bg-[var(--surface-muted)]"
+            />
 
-            <label className="grid gap-2 text-sm text-[var(--text-secondary)]">
-              Stage
-              <select
-                value={draft.stage}
-                onChange={(event) =>
-                  setDraft((current) => ({
-                    ...current,
-                    stage: event.target.value,
-                    status: event.target.value === "Closed Won" ? "Won" : event.target.value === "Closed Lost" ? "Lost" : "Open"
-                  }))
-                }
-                className="rounded-2xl border border-[var(--border-soft)] bg-[var(--surface-muted)] px-4 py-3 text-[var(--text-primary)] outline-none"
-              >
-                {STAGES.map((stage) => (
-                  <option key={stage} value={stage}>
-                    {stage}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <CustomSelect
+              label="Stage"
+              value={draft.stage}
+              onChange={(nextStage) =>
+                setDraft((current) => ({
+                  ...current,
+                  stage: nextStage,
+                  status:
+                    nextStage === "Closed Won"
+                      ? "Won"
+                      : nextStage === "Closed Lost"
+                        ? "Lost"
+                        : "Open"
+                }))
+              }
+              options={STAGES.map((stage) => ({
+                value: stage,
+                label: stage,
+                description:
+                  stage === "Qualified"
+                    ? "Validated interest and initial fit."
+                    : stage === "Proposal"
+                      ? "Commercial package shared with the buyer."
+                      : stage === "Negotiation"
+                        ? "Commercial and legal terms under discussion."
+                        : stage === "At Risk"
+                          ? "Needs intervention to avoid slippage."
+                          : stage === "Closed Won"
+                            ? "Revenue secured."
+                            : "Opportunity not converted."
+              }))}
+              buttonClassName="bg-[var(--surface-muted)]"
+            />
 
             <Button type="submit">
               <FiPlus />

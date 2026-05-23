@@ -4,6 +4,7 @@ import { FiEdit2, FiPlus, FiTrash2 } from "react-icons/fi";
 import { Button } from "../components/common/Button";
 import { Card } from "../components/common/Card";
 import { DataTable } from "../components/common/DataTable";
+import { Seo } from "../components/common/Seo";
 import { SectionHeading } from "../components/common/SectionHeading";
 import { Tag } from "../components/common/Tag";
 import { useAppContext } from "../context/AppContext";
@@ -110,6 +111,11 @@ export function CustomersPage() {
 
   return (
     <div className="space-y-6">
+      <Seo
+        title="Customers"
+        path="/customers"
+        description="Manage customer profiles, renewal posture, account plans, and interaction context from a polished CRM customer workspace."
+      />
       <SectionHeading
         eyebrow="Customer management"
         title="Accounts, contacts, and renewal posture"

@@ -1,5 +1,6 @@
 import { Card } from "../components/common/Card";
 import { DataTable } from "../components/common/DataTable";
+import { Seo } from "../components/common/Seo";
 import { SectionHeading } from "../components/common/SectionHeading";
 import { Tag } from "../components/common/Tag";
 import { useAppContext } from "../context/AppContext";
@@ -38,6 +39,11 @@ export function TeamPage() {
 
   return (
     <div className="space-y-6">
+      <Seo
+        title="Team Performance"
+        path="/team"
+        description="Review leaderboard performance, territory ownership, target attainment, and discount approvals across the sales team."
+      />
       <SectionHeading
         eyebrow="Team performance"
         title="Leaderboard, territories, and approvals"

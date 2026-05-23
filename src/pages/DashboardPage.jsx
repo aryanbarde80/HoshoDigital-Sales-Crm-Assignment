@@ -2,6 +2,7 @@ import { FiActivity, FiBarChart2, FiDollarSign, FiTrendingUp, FiUsers } from "re
 import { RevenueTrendChart, PipelineFunnelChart, RegionPerformanceChart, WinLossChart } from "../components/charts/Charts";
 import { Card } from "../components/common/Card";
 import { MetricCard } from "../components/common/MetricCard";
+import { Seo } from "../components/common/Seo";
 import { SectionHeading } from "../components/common/SectionHeading";
 import { useAppContext } from "../context/AppContext";
 import { formatCompactCurrency, formatPercent } from "../utils/formatters";
@@ -11,6 +12,11 @@ export function DashboardPage() {
 
   return (
     <div className="space-y-6">
+      <Seo
+        title="Dashboard"
+        path="/"
+        description="Monitor KPI cards, sales trends, weighted forecast, regional performance, and strategic revenue insights in Orbit Sales OS."
+      />
       <SectionHeading
         eyebrow="Overview"
         title="Performance cockpit"

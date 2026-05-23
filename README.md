@@ -46,6 +46,10 @@ Test run:
 npm run test:run
 ```
 
+## Vercel deployment
+
+`vercel.json` is included for SPA-friendly deployment on Vercel. After pushing the repository, Vercel can detect the Vite app automatically and route all client-side paths back to `index.html`.
+
 ## Why it is easy to evaluate
 
 - No backend service required

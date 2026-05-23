@@ -2,6 +2,8 @@ import { useState } from "react";
 import { FiPlus } from "react-icons/fi";
 import { Button } from "../components/common/Button";
 import { Card } from "../components/common/Card";
+import { CustomSelect } from "../components/common/CustomSelect";
+import { Seo } from "../components/common/Seo";
 import { SectionHeading } from "../components/common/SectionHeading";
 import { Tag } from "../components/common/Tag";
 import { useAppContext } from "../context/AppContext";
@@ -32,6 +34,11 @@ export function ActivitiesPage() {
 
   return (
     <div className="space-y-6">
+      <Seo
+        title="Activities"
+        path="/activities"
+        description="Log calls, meetings, notes, and follow-ups so customer-facing activity stays organized and visible across the CRM."
+      />
       <SectionHeading
         eyebrow="Activities"
         title="Calls, meetings, notes, and follow-ups"
@@ -85,50 +92,46 @@ export function ActivitiesPage() {
               </label>
             ))}
 
-            <label className="grid gap-2 text-sm text-[var(--text-secondary)]">
-              Activity type
-              <select
-                value={draft.type}
-                onChange={(event) => setDraft((current) => ({ ...current, type: event.target.value }))}
-                className="rounded-2xl border border-[var(--border-soft)] bg-[var(--surface-muted)] px-4 py-3 text-[var(--text-primary)] outline-none"
-              >
-                {["Call", "Meeting", "Note", "Follow-up"].map((type) => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <CustomSelect
+              label="Activity type"
+              value={draft.type}
+              onChange={(nextType) => setDraft((current) => ({ ...current, type: nextType }))}
+              options={[
+                { value: "Call", label: "Call", description: "Customer check-ins and phone follow-ups." },
+                { value: "Meeting", label: "Meeting", description: "Live stakeholder syncs and workshops." },
+                { value: "Note", label: "Note", description: "Internal notes and updates." },
+                { value: "Follow-up", label: "Follow-up", description: "Next actions after major conversations." }
+              ]}
+              buttonClassName="bg-[var(--surface-muted)]"
+            />
 
-            <label className="grid gap-2 text-sm text-[var(--text-secondary)]">
-              Customer
-              <select
-                value={draft.customerId}
-                onChange={(event) => setDraft((current) => ({ ...current, customerId: event.target.value }))}
-                className="rounded-2xl border border-[var(--border-soft)] bg-[var(--surface-muted)] px-4 py-3 text-[var(--text-primary)] outline-none"
-              >
-                {data.customers.map((customer) => (
-                  <option key={customer.id} value={customer.id}>
-                    {customer.name}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <CustomSelect
+              label="Customer"
+              value={draft.customerId}
+              onChange={(nextCustomerId) =>
+                setDraft((current) => ({ ...current, customerId: nextCustomerId }))
+              }
+              options={data.customers.map((customer) => ({
+                value: customer.id,
+                label: customer.name,
+                description: `${customer.region} • ${customer.contactName}`
+              }))}
+              buttonClassName="bg-[var(--surface-muted)]"
+            />
 
-            <label className="grid gap-2 text-sm text-[var(--text-secondary)]">
-              Outcome
-              <select
-                value={draft.outcome}
-                onChange={(event) => setDraft((current) => ({ ...current, outcome: event.target.value }))}
-                className="rounded-2xl border border-[var(--border-soft)] bg-[var(--surface-muted)] px-4 py-3 text-[var(--text-primary)] outline-none"
-              >
-                {["Scheduled", "Pending", "Done"].map((outcome) => (
-                  <option key={outcome} value={outcome}>
-                    {outcome}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <CustomSelect
+              label="Outcome"
+              value={draft.outcome}
+              onChange={(nextOutcome) =>
+                setDraft((current) => ({ ...current, outcome: nextOutcome }))
+              }
+              options={[
+                { value: "Scheduled", label: "Scheduled", description: "Planned and on the calendar." },
+                { value: "Pending", label: "Pending", description: "Awaiting response or next action." },
+                { value: "Done", label: "Done", description: "Completed and logged." }
+              ]}
+              buttonClassName="bg-[var(--surface-muted)]"
+            />
 
             <label className="grid gap-2 text-sm text-[var(--text-secondary)]">
               Notes

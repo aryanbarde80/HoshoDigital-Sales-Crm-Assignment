@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { FiArrowRight, FiBarChart2, FiLayers, FiTarget } from "react-icons/fi";
+import { Seo } from "../components/common/Seo";
 import { useAppContext } from "../context/AppContext";
 import { Button } from "../components/common/Button";
 
@@ -8,6 +9,11 @@ export function LoginPage() {
 
   return (
     <div className="min-h-screen bg-[var(--surface-app)] px-4 py-6">
+      <Seo
+        title="Login"
+        path="/login"
+        description="Sign in to Orbit Sales OS and explore role-based CRM dashboards for sales, marketing, product, and executive teams."
+      />
       <div className="mx-auto grid min-h-[calc(100vh-3rem)] max-w-[1500px] overflow-hidden rounded-[36px] border border-[var(--border-soft)] bg-[var(--surface-card)] shadow-[var(--shadow-card)] lg:grid-cols-[1.1fr_0.9fr]">
         <div className="relative overflow-hidden p-8 lg:p-14">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(96,165,250,0.22),transparent_30%),radial-gradient(circle_at_bottom_right,rgba(79,209,197,0.18),transparent_34%)]" />

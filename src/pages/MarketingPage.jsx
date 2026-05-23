@@ -1,5 +1,6 @@
 import { Card } from "../components/common/Card";
 import { DataTable } from "../components/common/DataTable";
+import { Seo } from "../components/common/Seo";
 import { SectionHeading } from "../components/common/SectionHeading";
 import { Tag } from "../components/common/Tag";
 import { useAppContext } from "../context/AppContext";
@@ -23,6 +24,11 @@ export function MarketingPage() {
 
   return (
     <div className="space-y-6">
+      <Seo
+        title="Marketing"
+        path="/marketing"
+        description="Track campaign ROI, qualified lead sharing, and customer segmentation from the marketing workspace inside Orbit Sales OS."
+      />
       <SectionHeading
         eyebrow="Marketing"
         title="Campaign tracking, lead sharing, and segmentation"

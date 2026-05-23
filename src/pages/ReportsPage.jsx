@@ -1,5 +1,6 @@
 import { RevenueTrendChart, RegionPerformanceChart, WinLossChart } from "../components/charts/Charts";
 import { Card } from "../components/common/Card";
+import { Seo } from "../components/common/Seo";
 import { SectionHeading } from "../components/common/SectionHeading";
 import { useAppContext } from "../context/AppContext";
 import { formatCompactCurrency, formatPercent } from "../utils/formatters";
@@ -9,6 +10,11 @@ export function ReportsPage() {
 
   return (
     <div className="space-y-6">
+      <Seo
+        title="Reports and Analytics"
+        path="/reports"
+        description="Explore forecasting visuals, revenue reporting, win-loss analysis, and regional commercial performance in Orbit Sales OS."
+      />
       <SectionHeading
         eyebrow="Reports & analytics"
         title="Forecasting, region analysis, and win/loss intelligence"
