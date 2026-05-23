@@ -1,4 +1,5 @@
-import { FiActivity, FiBarChart2, FiDollarSign, FiTrendingUp, FiUsers } from "react-icons/fi";
+import { FiActivity, FiArrowRight, FiBarChart2, FiDollarSign, FiTrendingUp, FiUsers } from "react-icons/fi";
+import { Link } from "react-router-dom";
 import { RevenueTrendChart, PipelineFunnelChart, RegionPerformanceChart, WinLossChart } from "../components/charts/Charts";
 import { Card } from "../components/common/Card";
 import { MetricCard } from "../components/common/MetricCard";
@@ -8,7 +9,15 @@ import { useAppContext } from "../context/AppContext";
 import { formatCompactCurrency, formatPercent } from "../utils/formatters";
 
 export function DashboardPage() {
-  const { data, insights, metrics } = useAppContext();
+  const { data, insights, metrics, roles, session } = useAppContext();
+  const activeRole = roles.find((role) => role.id === session.role);
+  const quickTourItems = [
+    { title: "Customer 360", path: "/customers", detail: "Profiles, history, health, and renewal context." },
+    { title: "Pipeline control", path: "/pipeline", detail: "Opportunity value, stage, probability, and ownership." },
+    { title: "Activity timeline", path: "/activities", detail: "Calls, meetings, notes, and follow-up discipline." },
+    { title: "Team command", path: "/team", detail: "Leaderboards, territories, and discount decisions." },
+    { title: "Executive lens", path: "/executive", detail: "Regional KPIs, forecasting, and strategic signals." }
+  ];
 
   return (
     <div className="space-y-6">
@@ -36,12 +45,40 @@ export function DashboardPage() {
         <PipelineFunnelChart opportunities={data.opportunities} />
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-2">
-        <RegionPerformanceChart regions={data.regionalPerformance} />
-        <WinLossChart data={data.winLoss} />
-      </div>
+      <div className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
+        <Card className="overflow-hidden">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+            <div>
+              <p className="text-xs uppercase tracking-[0.28em] text-[var(--text-muted)]">Evaluator quick tour</p>
+              <h3 className="mt-3 text-2xl font-semibold text-[var(--text-primary)]">Review the strongest flows first</h3>
+              <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--text-secondary)]">
+                Signed in as {activeRole?.title ?? "Active role"}. This workspace was shaped around the PDF user stories,
+                so the fastest demo path is to jump through the operational pages below.
+              </p>
+            </div>
+            <div className="rounded-[24px] border border-[var(--border-soft)] bg-[var(--surface-muted)] px-4 py-3 text-sm text-[var(--text-secondary)]">
+              <span className="block text-xs uppercase tracking-[0.24em] text-[var(--text-muted)]">Best starter role</span>
+              <span className="mt-2 block font-semibold text-[var(--text-primary)]">Executive Leadership</span>
+            </div>
+          </div>
 
-      <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
+          <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+            {quickTourItems.map((item) => (
+              <Link
+                key={item.path}
+                to={item.path}
+                className="group rounded-[24px] border border-[var(--border-soft)] bg-[var(--surface-muted)] p-4 transition duration-200 hover:-translate-y-1 hover:border-[var(--border-strong)]"
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <h4 className="text-base font-semibold text-[var(--text-primary)]">{item.title}</h4>
+                  <FiArrowRight className="text-[var(--text-secondary)] transition duration-200 group-hover:text-[var(--accent-strong)]" />
+                </div>
+                <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{item.detail}</p>
+              </Link>
+            ))}
+          </div>
+        </Card>
+
         <Card>
           <p className="text-xs uppercase tracking-[0.28em] text-[var(--text-muted)]">Strategic insights</p>
           <div className="mt-4 space-y-4">
@@ -53,7 +90,14 @@ export function DashboardPage() {
             ))}
           </div>
         </Card>
+      </div>
 
+      <div className="grid gap-6 xl:grid-cols-[0.85fr_1.15fr]">
+        <RegionPerformanceChart regions={data.regionalPerformance} />
+        <WinLossChart data={data.winLoss} />
+      </div>
+
+      <div className="grid gap-6">
         <Card>
           <p className="text-xs uppercase tracking-[0.28em] text-[var(--text-muted)]">Forecast widgets</p>
           <div className="mt-4 grid gap-4 md:grid-cols-2">
